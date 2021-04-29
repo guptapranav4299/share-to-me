@@ -13,6 +13,9 @@ const emailForm = document.querySelector("#emailform")
 const copyBtn = document.querySelector("#copybtn")
 const sharingContainer = document.querySelector(".sharing-container")
 const fileUrlInput = document.querySelector("#fileUrl")
+const toast = document.querySelector(".toast")
+
+
 const host = "https://inshare.heroku.app.com/"
 const uploadUrl = `${host}/api/files`;
 const emailURL = `${host}/api/files/send`;
@@ -55,6 +58,7 @@ browseBtn.addEventListener("click", () => {
 copyBtn.addEventListener("click", () =>{
     fileUrlInput.select()
     document.execCommand("copy")
+    showToast("Copied to Clipboard")
 
 })
 
@@ -77,10 +81,15 @@ fileUrlInput.addEventListener("click", () => {
       xhr.onreadystatechange = () =>{
           if(xhr.readyState === XMLHttpRequest.DONE){
               console.log(xhr.response);
-              onUploadSuccess(JSON.parse(xhr.response))
+              onUploadSuccess(xhr.response)
           }
       }
       xhr.upload.onprogress = updateProgress;
+
+      xhr.upload.onerror = () =>{
+          fileInput.value = ""
+          showToast(`Error in upload: ${xhr.statusText}`)
+      }
       xhr.open("POST", uploadUrl)
       xhr.send(formData)
   }
@@ -94,11 +103,15 @@ fileUrlInput.addEventListener("click", () => {
     progressBar.style.transform = scaleX;
   }
 
-  const onUploadSuccess = ({ file : url }) =>{
-      console.log(file);
+  const onUploadSuccess = (res) =>{
+      
       fileInput.value = "";
+      status.innerText = "Uploaded"
       emailForm[2].removeAttribute("disabled");
+      emailForm[2].innerText = "Send";
       progressContainer.style.display= "none";
+      const { file: url } = res
+      console.log(url);
       sharingContainer.style.display= "block"
       fileUrlInput.value = url
   }
@@ -131,3 +144,13 @@ fileUrlInput.addEventListener("click", () => {
           }
         });
   })
+
+ let toastTimer
+  const showToast = (msg) =>{
+      toast.innerText = msg
+      clearTimeout(toastTimer)
+
+      toastTimer = setTimeout(() =>{
+        toast.style.transform = "translateY(0)"
+      },2000)
+  }
