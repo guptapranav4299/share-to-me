@@ -41,8 +41,17 @@ dropZone.addEventListener("drop", (e) =>{
     const files = e.dataTransfer.files;
     console.log(files);
     if(files.length === 1){
+      if(files[0].size < maxAllowedSize){
         fileInput.files = files;
         uploadFile()
+      }else{
+        showToast("Max file size is 100mb")
+        fileInput.value = ""
+      }
+    }
+    else if(files.length >1){
+      showToast("Cant upload multiple files")
+      fileInput.value = ""
     }
     dropZone.classList.remove("dragged")
 })
@@ -71,10 +80,19 @@ fileUrlInput.addEventListener("click", () => {
 
 
       files = fileInput.files;
+
       const formData = new FormData()
       formData.append("myFile",files[0])
 
+
+
+      // if(fileInput.files.length > 1){
+      //   fileInput.value = "";
+      //   showToast("Upload only 1 file")
+      //   return 
+      // }
       progressContainer.style.display = "block"
+
 
       const xhr = new XMLHttpRequest();
 
