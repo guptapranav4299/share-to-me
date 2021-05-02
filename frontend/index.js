@@ -16,7 +16,7 @@ const fileUrlInput = document.querySelector("#fileUrl")
 const toast = document.querySelector(".toast")
 
 
-const host = "https://inshare.heroku.app.com/"
+const host = "http:localhost:5000/"
 const uploadUrl = `${host}/api/files`;
 const emailURL = `${host}/api/files/send`;
 
