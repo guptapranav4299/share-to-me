@@ -21,6 +21,10 @@ app.set('view engine', 'ejs');
 
 // Routes
 
+app.get('/',(req,res) =>{
+    res.render("Welcome to backend of Share to me.")
+})
+
 app.use('/api/files', require('./routes/files'))
 app.use('/files',require('./routes/show'))
 app.use('/files/download',require('./routes/download'))
